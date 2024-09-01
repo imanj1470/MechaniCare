@@ -28,7 +28,8 @@ const AddCarModal = () => {
         
             const result = await response.json();
             if (result.success) {
-              setScrapedData(result.data);
+              setScrapedData(result.message);
+              console.log(scrapedData)
             } else {
               console.error('Scraping failed:', result.error);
             }

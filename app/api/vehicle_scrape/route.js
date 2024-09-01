@@ -1,9 +1,19 @@
+const scrape = (vin) => {
+//add scraping logic here and return to the add_car_modal in response. json of data:"brand":"volvo", "make":"xc90", etc
+const result={}
+
+return {result}
+}
+
+
 export async function POST(req) {
   try {
     const body = await req.json();
     const { vin } = body;
 
-    //add scraping logic here and return to the add_car_modal in response. json of data:"brand":"volvo", "make":"xc90", etc
+    // Uncomment this to call the scraping logic
+    // const scrapedData = scrape(vin)
+
     const responseMessage = `Received VIN: ${vin}`;
 
     return new Response(JSON.stringify({ success: true, message: responseMessage }), {
