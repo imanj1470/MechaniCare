@@ -11,10 +11,7 @@ export async function POST(req) {
     const body = await req.json();
     const { vin } = body;
 
-    // Uncomment this to call the scraping logic
-    // const scrapedData = scrape(vin)
-
-    const responseMessage = `Received VIN: ${vin}`;
+    const responseMessage = `Received VIN: ${vin}`; //change it to: const responseMessage = scrape({vin})
 
     return new Response(JSON.stringify({ success: true, message: responseMessage }), {
       status: 200,
