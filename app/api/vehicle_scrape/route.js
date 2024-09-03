@@ -1,46 +1,50 @@
 const scrape = async (vin) => {
   try {
-    const response = await fetch(`https://vincheck.info/check/vehicle-specification.php?vin=${vin}`, {
+    const response = await fetch(`https://vincheck.info/check/recalls-defects.php?vin=${vin}`, {
       method: 'GET',
     });
 
-    if (!response.ok) {
+    if (!response.ok ) {
       throw new Error(`Error fetching data: ${response.status}`);
     }
 
     const result = await response.text();
-    console.log('Server response:', result);
+    //console.log('Result1', result);
+
     const cheerio = require('cheerio');
 
     const $ = cheerio.load(result);
-    const vehicleSpecDiv = $('.vehicle-spec-tbl');
-
+    const vehicleSpecDiv = $('div.row.gap-report-summary').find('span.sub-head').text();
+    console.log(vehicleSpecDiv)
     // Initialize an object to hold all the data
     const vehicleData = {};
 
     // Check if the div is found
     if (vehicleSpecDiv.length > 0) {
       // Extract the table rows
-      const rows = vehicleSpecDiv.find('table tbody tr');
+      //const rows = vehicleSpecDiv.find('cols-xs-12');
+      //console.log(rows)
+    
 
-      rows.each((index, row) => {
-        const cells = $(row).find('td');
+      // rows.each((index, row) => {
+      //   const cells = $(row).find('td');
 
-        cells.each((cellIndex, cell) => {
-          const text = $(cell).text().trim();
-          if (cellIndex % 2 === 0) {
-            // Use even index as keys (e.g., 'year', 'make')
-            const key = text;
-            vehicleData[key] = '';
-          } else {
-            // Use odd index as values (e.g., '2004', 'Honda')
-            vehicleData[Object.keys(vehicleData).pop()] = text;
-          }
-        });
-      });
+      //   cells.each((cellIndex, cell) => {
+      //     const text = $(cell).text().trim();
+      //     if (cellIndex % 2 === 0) {
+      //       // Use even index as keys (e.g., 'year', 'make')
+      //       const key = text;
+      //       vehicleData[key] = '';
+      //     } else {
+      //       // Use odd index as values (e.g., '2004', 'Honda')
+      //       vehicleData[Object.keys(vehicleData).pop()] = text;
+      //     }
+      //   });
+      // });
 
-      console.log('Vehicle Data:', vehicleData);
-      return vehicleData; // Return the consolidated object
+      //console.log('Vehicle Data:', vehicleData);
+
+      return "rows"; // Return the consolidated object
     } else {
       console.error('No div with the class vehicle-spec-tbl found.');
       return {};
