@@ -1,45 +1,55 @@
 "use client"
 import { Layout } from "./components/header.js"
 import {AddCarModal} from "./components/add_car_modal.js"
-
-import { Box, Typography, Paper, Button } from "@mui/material"
+import { Modal, Box, TextField, Button, Typography, Paper, Grid2} from "@mui/material"
 import { useRouter } from 'next/router';
+import React, { useState } from 'react'
 
 export default function Home() {
   const router = useRouter();
   return (
     <Layout>
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-        <Paper
-          elevation={3}
-          sx={{
-            padding: "2rem",
-            width: "300px",
-            textAlign: "center",
-            backgroundColor: "white",
-          }}
-        >
-          <Typography variant="h5" gutterBottom>
-            Car Attributes
-          </Typography>
-          <Typography variant="body1">
-            <strong>Make:</strong> Tesla
-          </Typography>
-          <Typography variant="body1">
-            <strong>Model:</strong> Model S
-          </Typography>
-          <Typography variant="body1">
-            <strong>Year:</strong> 2024
-          </Typography>
-          <Typography variant="body1">
-            <strong>Color:</strong> Red
-          </Typography>
-          <Typography variant="body1">
-            <strong>VIN:</strong> 1G1JC1444PZ215071
-          </Typography>
-        </Paper>
 
-        <AddCarModal/>
+        {/* <AddCarModal/> */}
+
+        <Grid2 container spacing={2}>
+          <Grid2 item xs={6}>
+          <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                width: "600px",
+                textAlign: "center",
+                backgroundColor: "white",
+              }}
+            >
+              <Typography variant="h5" gutterBottom>
+                Car Attributes
+              </Typography>
+              <div> {vinAttributes}</div>
+          </Paper>
+          </Grid2>
+          <Grid2 item xs={6}>
+          <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                width: "600px",
+                textAlign: "center",
+                backgroundColor: "white",
+              }}
+            >
+              <Typography variant="h5" gutterBottom>
+                Recalls
+              </Typography>
+              <div> {recalls}</div>
+          </Paper>
+          </Grid2>
+        </Grid2>
+        
+
+        <AddCarModal/> 
 
       </Box>
     </Layout>

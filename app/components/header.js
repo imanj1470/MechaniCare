@@ -14,7 +14,9 @@ const Layout = ({ children }) => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ backgroundColor: "lightblue", height: "15vh", padding: "0 2rem" }}
+        height="70px"
+        maxWidth
+        sx={{ backgroundColor: "lightblue", padding: "0 2rem" }}
       >
         <Typography variant="h4" color="black">
           MechaniCare

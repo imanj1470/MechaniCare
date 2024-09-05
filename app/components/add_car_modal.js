@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
-import { Modal, Box, TextField, Button, Typography } from "@mui/material"
+import { Modal, Box, TextField, Button, Typography, Paper, Grid2} from "@mui/material"
 
 const AddCarModal = () => {
     const [open, setOpen] = useState(false)
     const [vin, setVin] = useState("")
-    const [scrapedData, setScrapedData] = useState()
 
+    
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setOpen(false);
         try {
             const response = await fetch('/api/vehicle_scrape', {
               method: 'POST',
@@ -27,12 +28,8 @@ const AddCarModal = () => {
             }
         
             const result = await response.json();
-            if (result.success) {
-              setScrapedData(result.message);
-              console.log(scrapedData)
-            } else {
-              console.error('Scraping failed:', result.error);
-            }
+            console.log(result)
+
           } catch (error) {
             console.error('Error sending data to API:', error);
           }
@@ -40,6 +37,8 @@ const AddCarModal = () => {
 
 
     return (
+      <div>
+
         <Box mt={3}>
             <Button variant="contained" color="primary" onClick={handleOpen}>
                 Add Car
@@ -83,7 +82,9 @@ const AddCarModal = () => {
                 </Box>
             </Modal>
         </Box>
+        </div>
     )
+    
 }
 
 export { AddCarModal }
