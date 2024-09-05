@@ -9,15 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.4.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@fontsource/poppins": "^5.0.15",
     "@mui/icons-material": "^6.0.1",
-    "@mui/material": "^6.0.1",
+    "@mui/material": "^6.0.2",
     "cheerio": "^1.0.0",
+    "clerk": "^0.6.1",
+    "dotenv": "^16.4.5",
     "firebase": "^10.13.1",
     "firestore": "^1.1.6",
     "next": "^14.2.7",
     "react": "^18",
     "react-dom": "^18"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4"
   }
 }

@@ -1,14 +1,16 @@
-"use client"
-import { Layout } from "./components/header.js"
+"use client";
+//import { Layout } from "./components/header.js"
 import {AddCarModal} from "./components/add_car_modal.js"
 import { Modal, Box, TextField, Button, Typography, Paper, Grid2} from "@mui/material"
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 
 export default function Home() {
-  const router = useRouter();
+  //const router = useRouter();
+  const [vinAttributes, setvinAttributes] = useState("")
+  const [recalls, setrecalls] = useState("")
   return (
-    <Layout>
+    //<Layout>
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
 
         {/* <AddCarModal/> */}
@@ -52,6 +54,6 @@ export default function Home() {
         <AddCarModal/> 
 
       </Box>
-    </Layout>
+    //</Layout>
   )
 }
