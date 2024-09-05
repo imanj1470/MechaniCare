@@ -32,6 +32,9 @@ export default function Home() {
           <Typography variant="body1">
             <strong>Color:</strong> Red
           </Typography>
+          <Typography variant="body1">
+            <strong>VIN:</strong> 1G1JC1444PZ215071
+          </Typography>
         </Paper>
 
         <AddCarModal/>
