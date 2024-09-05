@@ -1,56 +1,42 @@
 const scrape = async (vin) => {
   try {
-    const response = await fetch(`https://vincheck.info/check/recalls-defects.php?vin=${vin}`, {
+    const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`, {
       method: 'GET',
     });
 
     if (!response.ok ) {
       throw new Error(`Error fetching data: ${response.status}`);
     }
+    const result = await response.json() 
+    const result_list = result['Results'] //this is a list of objects but json is formatted weird
+    console.log("JSON BEFORE FORMATTING", result_list) //can see it here
 
-    const result = await response.text();
-    //console.log('Result1', result);
 
-    const cheerio = require('cheerio');
-
-    const $ = cheerio.load(result);
-    const vehicleSpecDiv = $('div.row.gap-report-summary').find('span.sub-head').text();
-    console.log(vehicleSpecDiv)
-    // Initialize an object to hold all the data
-    const vehicleData = {};
-
-    // Check if the div is found
-    if (vehicleSpecDiv.length > 0) {
-      // Extract the table rows
-      //const rows = vehicleSpecDiv.find('cols-xs-12');
-      //console.log(rows)
-    
-
-      // rows.each((index, row) => {
-      //   const cells = $(row).find('td');
-
-      //   cells.each((cellIndex, cell) => {
-      //     const text = $(cell).text().trim();
-      //     if (cellIndex % 2 === 0) {
-      //       // Use even index as keys (e.g., 'year', 'make')
-      //       const key = text;
-      //       vehicleData[key] = '';
-      //     } else {
-      //       // Use odd index as values (e.g., '2004', 'Honda')
-      //       vehicleData[Object.keys(vehicleData).pop()] = text;
-      //     }
-      //   });
-      // });
-
-      //console.log('Vehicle Data:', vehicleData);
-
-      return "rows"; // Return the consolidated object
-    } else {
-      console.error('No div with the class vehicle-spec-tbl found.');
-      return {};
+    let new_model_object = {}
+    for (const index in result_list){ //looping through the list given by the get request
+      const variable = String(result_list[index].Variable) //fixing the object by putting the Variable as the key and Value as the Value in the new object
+      const value = result_list[index].Value
+      new_model_object[variable] = value
     }
+
+    console.log("JSON OBJECT FORMATTED: \n", new_model_object)
+
+    const recalls = await fetch(`https://api.nhtsa.gov/recalls/recallsByVehicle?make=${new_model_object.Make}&model=${new_model_object.Model}&modelYear=${new_model_object["Model Year"]}`, {
+      method: 'GET', // this calls the recall API with make, model, and year as params
+    });
+
+    const recall_response = await recalls.json()
+
+    console.log("RECALLS FOR MODEL: \n", recall_response)
+
+    new_model_object["Recalls"] = recall_response["results"] //updating object to include the list of json recalls
+
+    console.log("JSON WITH VIN INFORMATION AND RECALLS: \n", new_model_object)
+
+    return new_model_object
+
   } catch (error) {
-    console.error('Error during scraping:', error);
+    console.error('Error during get Request:', error);
     throw error;
   }
 };

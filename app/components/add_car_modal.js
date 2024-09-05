@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
-import { Modal, Box, TextField, Button, Typography } from "@mui/material"
+import { Modal, Box, TextField, Button, Typography, Paper  } from "@mui/material"
+import { Tsukimi_Rounded } from 'next/font/google'
 
 const AddCarModal = () => {
     const [open, setOpen] = useState(false)
     const [vin, setVin] = useState("")
-    const [scrapedData, setScrapedData] = useState()
+    const [scrapedData, setScrapedData] = useState({})
+    const [attributesList, setAttributes] = useState([])
 
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setOpen(false);
         try {
             const response = await fetch('/api/vehicle_scrape', {
               method: 'POST',
@@ -27,6 +30,12 @@ const AddCarModal = () => {
             }
         
             const result = await response.json();
+
+            Object.keys(result.message).forEach(key => {
+              
+              console.log("loop", key, result.message[key]);
+            });
+
             if (result.success) {
               setScrapedData(result.message);
               console.log(scrapedData)
@@ -40,6 +49,22 @@ const AddCarModal = () => {
 
 
     return (
+      <div>
+          <Paper
+              elevation={3}
+              sx={{
+                padding: "2rem",
+                width: "300px",
+                textAlign: "center",
+                backgroundColor: "white",
+              }}
+            >
+              <Typography variant="h5" gutterBottom>
+                Car Attributes
+              </Typography>
+              <div> {scrapedData["Make"]}</div>
+        </Paper>
+
         <Box mt={3}>
             <Button variant="contained" color="primary" onClick={handleOpen}>
                 Add Car
@@ -83,7 +108,9 @@ const AddCarModal = () => {
                 </Box>
             </Modal>
         </Box>
+        </div>
     )
+    
 }
 
 export { AddCarModal }
