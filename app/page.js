@@ -3,8 +3,10 @@ import { Layout } from "./components/header.js"
 import {AddCarModal} from "./components/add_car_modal.js"
 
 import { Box, Typography, Paper, Button } from "@mui/material"
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const router = useRouter();
   return (
     <Layout>
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
