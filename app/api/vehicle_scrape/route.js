@@ -9,7 +9,8 @@ const scrape = async (vin) => {
     }
     const result = await response.json() 
     const result_list = result['Results'] //this is a list of objects but json is formatted weird
-    console.log("JSON BEFORE FORMATTING", result_list) //can see it here
+    //
+   // console.log("JSON BEFORE FORMATTING", result_list) //can see it here
 
 
     let new_model_object = {}
@@ -19,7 +20,7 @@ const scrape = async (vin) => {
       new_model_object[variable] = value
     }
 
-    console.log("JSON OBJECT FORMATTED: \n", new_model_object)
+    //console.log("JSON OBJECT FORMATTED: \n", new_model_object)
 
     const recalls = await fetch(`https://api.nhtsa.gov/recalls/recallsByVehicle?make=${new_model_object.Make}&model=${new_model_object.Model}&modelYear=${new_model_object["Model Year"]}`, {
       method: 'GET', // this calls the recall API with make, model, and year as params
@@ -27,11 +28,11 @@ const scrape = async (vin) => {
 
     const recall_response = await recalls.json()
 
-    console.log("RECALLS FOR MODEL: \n", recall_response)
+    //console.log("RECALLS FOR MODEL: \n", recall_response)
 
     new_model_object["Recalls"] = recall_response["results"] //updating object to include the list of json recalls
 
-    console.log("JSON WITH VIN INFORMATION AND RECALLS: \n", new_model_object)
+    //console.log("JSON WITH VIN INFORMATION AND RECALLS: \n", new_model_object)
 
     return new_model_object
 
@@ -41,26 +42,61 @@ const scrape = async (vin) => {
   }
 };
 
+const formatData = (result) => {
+  var attributes_list = [];
+
+  Object.keys(result).forEach(function (key) {
+    // Only add the key-value pair if the value exists, is not 'Not Applicable', and is not the "Recalls" field
+    if (result[key] && result[key] !== 'Not Applicable' && key !== "Recalls") {
+      attributes_list.push(`${key}: ${result[key]} \n`);
+    }
+  });
+
+  var recall_list = [];
+  // Safely check if the "Recalls" field exists and is an array before processing
+  if (Array.isArray(result["Recalls"])) {
+    result["Recalls"].forEach(function (recall) {
+      // Check if recall object exists before trying to access its properties
+      if (recall && typeof recall === 'object') {
+        Object.keys(recall).forEach(function (index) {
+          recall_list.push(`${index}: \n ${recall[index]}  \n`);
+        });
+      }
+    });
+  } else {
+    // If "Recalls" is missing or not an array, log a warning or handle accordingly
+    console.warn("Recalls data is missing or not an array.");
+  }
+
+  // Return the formatted attributes and recall lists
+  return { attributes_list, recall_list };
+};
 
 export async function POST(req) {
   try {
-      const body = await req.json();
-      const { vin } = body;
+    const body = await req.json();
+    const { vin } = body;
 
-      const scrapedData = await scrape(vin); // Use the scrape function to get the data
+    if (!vin) {
+      throw new Error('VIN is missing');
+    }
 
-      return new Response(JSON.stringify({ success: true, message: scrapedData }), {
-          status: 200,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
+    const scrapedData = await scrape(vin); // Use the scrape function to get the data
+
+    const formattedData = formatData(scrapedData)
+
+    return new Response(JSON.stringify({ success: true, message: formattedData }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
-      return new Response(JSON.stringify({ success: false, error: error.message }), {
-          status: 500,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
+    return new Response(JSON.stringify({ success: false, error: error.message }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
