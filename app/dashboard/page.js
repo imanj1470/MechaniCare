@@ -1,14 +1,29 @@
 "use client"
 //import { Layout } from "./components/header.js"
 import { Box, Grid2, Paper, Typography } from "@mui/material";
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AddCarModal } from "../components/add_car_modal.js"
-import { Layout } from "../components/Layout.js";
+import { Layout ,Loading} from "../components/Layout.js";
+import { useUser, useAuth } from "@clerk/nextjs"
+import { useState, useEffect } from "react"
 
 export default function Home() {
-  //const router = useRouter();
+  const router = useRouter();
+  const { isLoaded, isSignedIn } = useUser();
   const [vinAttributes, setvinAttributes] = useState("")
   const [recalls, setrecalls] = useState("")
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded || !isSignedIn) {
+    // Optionally, show a loading state while checking the user status
+    <Loading/>
+  }
+
   return (
     <Layout>
 

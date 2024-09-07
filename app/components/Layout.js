@@ -50,4 +50,13 @@ const Layout = ({ children }) => {
         </Box>
     )
 }
-export { Layout };
+
+const Loading = () => {
+return(
+    <Box display="flex" justifyContent="center" alignItems="center">
+<Typography variant="h2">Loading...</Typography>
+    </Box>
+)
+}
+
+export { Layout , Loading};

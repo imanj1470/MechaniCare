@@ -5,9 +5,35 @@ const AddCarModal = () => {
     const [open, setOpen] = useState(false)
     const [vin, setVin] = useState("")
 
+
     
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
+
+    const sendVinData = async (vin ,car_data) => {
+        try {
+          const response = await fetch('/api/store_data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ vin, apiResponse: car_data }),
+          });
+      
+          const data = await response.json();
+      
+          if (response.ok) {
+            console.log('Data stored successfully:', data);
+            // Handle success (e.g., show a notification or update UI)
+          } else {
+            console.error('Error storing data:', data.message);
+            // Handle error (e.g., show an error message to the user)
+          }
+        } catch (error) {
+          console.error('Request failed:', error);
+          // Handle request failure (e.g., network issues)
+        }
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,11 +55,17 @@ const AddCarModal = () => {
         
             const result = await response.json();
             console.log(result)
+            sendVinData(vin, result)
+
+            //now send data to db
+            
+
 
           } catch (error) {
             console.error('Error sending data to API:', error);
           }
         };
+
 
 
     return (
