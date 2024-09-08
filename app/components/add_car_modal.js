@@ -20,7 +20,30 @@ const AddCarModal = ({ onCarAdded }) => {
           const data = await response.json();
       
           if (response.ok) {
-            // Handle success (e.g., show a notification or update UI)
+            try {
+              const response = await fetch(`/api/store_pinecone?vin=${vin}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+        
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+        
+              const data = await response.json();
+              console.log('Fetched VIN Data:', data);
+        
+              if (data.success) {
+                updateCarDetails(data.data)
+        
+              } else {
+                console.error('Error fetching data:', data.message);
+              }
+            } catch (error) {
+              console.error('Error fetching VIN data:', error.message);
+            }
           } else {
             console.error('Error storing data:', data.message);
             // Handle error (e.g., show an error message to the user)
