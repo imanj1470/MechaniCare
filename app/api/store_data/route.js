@@ -17,7 +17,6 @@ const formatAttributes = (attributesList) => {
 export async function POST(req) {
   try {
     const { vin, apiResponse } = await req.json();
-    console.log('Received data:', { vin, apiResponse });
 
     // Ensure valid data
     if (!vin || !apiResponse || !apiResponse.message) {
@@ -28,7 +27,6 @@ export async function POST(req) {
 
     // Get the user ID from the auth session
     const { userId } = auth();
-    console.log(userId);
 
     if (!userId) {
       return NextResponse.json({ success: false, message: 'User id not found' }, { status: 400 });

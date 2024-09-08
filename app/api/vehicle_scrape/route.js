@@ -10,7 +10,6 @@ const scrape = async (vin) => {
     const result = await response.json() 
     const result_list = result['Results'] //this is a list of objects but json is formatted weird
     //
-   // console.log("JSON BEFORE FORMATTING", result_list) //can see it here
 
 
     let new_model_object = {}
@@ -20,7 +19,6 @@ const scrape = async (vin) => {
       new_model_object[variable] = value
     }
 
-    //console.log("JSON OBJECT FORMATTED: \n", new_model_object)
 
     const recalls = await fetch(`https://api.nhtsa.gov/recalls/recallsByVehicle?make=${new_model_object.Make}&model=${new_model_object.Model}&modelYear=${new_model_object["Model Year"]}`, {
       method: 'GET', // this calls the recall API with make, model, and year as params
@@ -28,11 +26,8 @@ const scrape = async (vin) => {
 
     const recall_response = await recalls.json()
 
-    //console.log("RECALLS FOR MODEL: \n", recall_response)
-
     new_model_object["Recalls"] = recall_response["results"] //updating object to include the list of json recalls
 
-    //console.log("JSON WITH VIN INFORMATION AND RECALLS: \n", new_model_object)
 
     return new_model_object
 
