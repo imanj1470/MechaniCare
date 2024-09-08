@@ -68,13 +68,14 @@ export default function Home() {
       const model = item.attributes.Model;
       // Assume year is not provided in your current data structure, use a placeholder or fetch from elsewhere
       const year = item.attributes.Year || "Unknown";
-
+      const mileage = item.mileage || "Unknown";
       // Return the details in JSON format
       return {
         vin,
         make,
         model,
-        year
+        year,
+        mileage
       };
     });
 
@@ -109,6 +110,7 @@ export default function Home() {
                 <p>Make: {car.make}</p>
                 <p>Model: {car.model}</p>
                 <p>Year: {car.year}</p>
+                <p>Mileage: {car.mileage}</p>
                 <Button>Details</Button>
               </Paper>
               

@@ -24,9 +24,6 @@ export default function Car() {
     const recallsRef = useRef(null);
     const attributesRef = useRef(null);
 
-    const attributesRef = useRef(null);
-    const recallsRef = useRef(null);
-
     // Redirect to home if not signed in
     useEffect(() => {
         if (isLoaded && !isSignedIn) {
