@@ -1,27 +1,28 @@
 "use client"
 //import { Layout } from "./components/header.js"
-import { Box, Grid2, Paper, Typography, Button } from "@mui/material";
+import { Box, Grid2, Paper, Typography, Button, List } from "@mui/material";
 import { useRouter } from 'next/navigation';
 import { AddCarModal } from "../components/add_car_modal.js"
 import { Layout, Loading } from "../components/Layout.js";
 import { useUser, useAuth } from "@clerk/nextjs"
 import { useState, useEffect } from "react"
-
+import { fetchRecommendations } from '../components/fetchRecommendations.js';
 export default function Home() {
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useUser();
-
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [recommendations, setRecommendations] = useState([]);
   const [cars, setCars] = useState([])
 
-  useEffect(() => {
-    fetchCars();
-  }, [])
-
+ 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push('/');
+    } else if (isLoaded && isSignedIn && user?.id) {
+      // Fetch cars and recommendations when the user is signed in and loaded
+      fetchCars();
+      fetchUserRecommendations(user.id);
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn, user, router]);
 
   if (!isLoaded || !isSignedIn) {
     // Optionally, show a loading state while checking the user status
@@ -30,7 +31,16 @@ export default function Home() {
 
   const handleCarClick = (id) => {
     router.push(`/car?id=${id}`)
-}
+  }
+
+  const fetchUserRecommendations = async (userId) => {
+    try {
+      const data = await fetchRecommendations(userId);
+      setRecommendations(data);
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+    } 
+  };
 
   const fetchCars = async () => {
     try {
@@ -101,7 +111,7 @@ export default function Home() {
                 }}
                 onClick={() => {
                   handleCarClick(car.vin)
-              }}
+                }}
               >
                 <Typography variant="h6" gutterBottom>
                   Car Details
@@ -113,7 +123,7 @@ export default function Home() {
                 <p>Mileage: {car.mileage}</p>
                 <Button>Details</Button>
               </Paper>
-              
+
             </Grid2>
           ))}
 
@@ -127,15 +137,26 @@ export default function Home() {
                 backgroundColor: "white",
               }}
             >
-              <Typography variant="h5" gutterBottom>
-                Upcoming Service
-              </Typography>
-              <div>Oil change: 20 days</div>
+              <Box p={2}>
+                <Typography variant="h5" gutterBottom>
+                  Your Recommendations
+                </Typography>
+                <List>
+                  {recommendations.map((rec, index) => (
+                    <ListItem key={index}>
+                      <ListItemText
+                        primary={rec.text}
+                        secondary={`Date: ${new Date(rec.date).toLocaleDateString()}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Paper>
           </Grid2>
         </Grid2>
 
-        <AddCarModal onCarAdded={fetchCars}/>
+        <AddCarModal onCarAdded={fetchCars} />
       </Box>
     </Layout>
   )

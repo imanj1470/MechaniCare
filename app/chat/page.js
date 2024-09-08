@@ -1,13 +1,26 @@
 "use client";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, Button, Divider, Stack, TextField, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useUser, useAuth } from "@clerk/nextjs"
 
 export default function MechanicChat() {
-    const router = useRouter();
 
+    const { isLoaded, isSignedIn, user } = useUser();
+    const router = useRouter();
+    
+    const userId = user?.id;
+
+    useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+            router.push('/');
+        }
+    }, [isLoaded, isSignedIn, router]);
+
+    const [inputText, setInputText] = useState('');
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
@@ -15,6 +28,7 @@ export default function MechanicChat() {
         },
     ]);
     const [message, setMessage] = useState('');
+    const [openModal, setOpenModal] = useState(false); // State to control the modal
 
     const stackRef = useRef(null);
 
@@ -67,6 +81,41 @@ export default function MechanicChat() {
         setMessage("")
     };
 
+
+    const handleAddClick = async () => {
+        if (!inputText.trim()) {
+            alert('Please enter a recommendation.');
+            return;
+        }
+
+        if (!userId) {
+            alert('User not authenticated.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/update_recommendation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, recommendation: inputText }), // Correct field names
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Recommendation added successfully!');
+                setInputText(''); // Clear input field
+                setOpenModal(false); // Close the modal
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            alert('An error occurred while adding the recommendation.');
+        }
+    };
+
     return (
         <Box
             width="100vw"
@@ -89,7 +138,7 @@ export default function MechanicChat() {
                 borderRadius={4}
                 p={2}
                 spacing={2}
-                sx={{ backgroundColor: "#E1C9FE" }}
+                sx={{ backgroundColor: "#F1E9FB" }}
             >
                 <Box
                     width="100%"
@@ -121,12 +170,11 @@ export default function MechanicChat() {
                             justifyContent={msg.role === 'assistant' ? 'flex-start' : 'flex-end'}
                         >
                             <Box
-                                bgcolor={msg.role === 'assistant' ? '#F0F0F0' : '#0162FF'}
+                                bgcolor={msg.role === 'assistant' ? '#D7D7D7' : '#0162FF'}
                                 color={msg.role === 'assistant' ? 'black' : 'white'}
-                                //color="white"
                                 borderRadius={15}
                                 mx={2}
-                                padding={2.5}
+                                padding={2.8}
                                 sx={{ whiteSpace: 'pre-wrap' }}
                             >
                                 {msg.content}
@@ -173,6 +221,59 @@ export default function MechanicChat() {
                     </Button>
                 </Stack>
             </Stack>
+
+            {/* Floating button to open the modal */}
+            <Box
+                onClick={() => setOpenModal(true)}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                width="15vw"
+                height="15vh"
+                sx={{
+                    position: 'fixed',
+                    top: '1vw',
+                    right: '1vw',
+                    backgroundColor: '#0099FF',
+                    color: 'white',
+                    padding: 2,
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: '#007ACC' },
+                }}
+            >
+                <Typography variant="h15">Save reccomendation</Typography>
+            </Box>
+
+            {/* Modal for adding recommendations */}
+            <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                <DialogTitle>Add Recommendation</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Recommendation"
+                        fullWidth
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        sx={{ marginBottom: 2 }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddClick}
+                    >
+                        Add
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Box
                 onClick={() => router.push("/dashboard")}
