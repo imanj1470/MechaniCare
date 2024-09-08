@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Modal, Box, TextField, Button, Typography, Paper, Grid2} from "@mui/material"
 
-const AddCarModal = () => {
+const AddCarModal = ({ onCarAdded }) => {
     const [open, setOpen] = useState(false)
     const [vin, setVin] = useState("")
     const handleOpen = () => setOpen(true)
@@ -51,9 +51,10 @@ const AddCarModal = () => {
         
             const result = await response.json();
             sendVinData(vin, result)
-
-
-
+            
+            if (onCarAdded) {
+              onCarAdded(); // <-- Trigger fetchCars after adding the car
+            }
           } catch (error) {
             console.error('Error sending data to API:', error);
           }

@@ -7,7 +7,7 @@ import { Box, Container, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { WaveSVG } from "./components/wave";
 import "./globals.css";
-import {Button} from "@mui/material"
+import { Button } from "@mui/material"
 
 require('dotenv').config({ path: '.env.local' });
 
@@ -68,7 +68,24 @@ export default function Page() {
                 router.push('/dashboard')
               }
             }
-            } variant="contained" color="primary" sx={{ mt: 2, backgroundColor: "white", color: "black", borderRadius: 2, paddingLeft: 2.5, paddingRight: 2.5, fontSize: 16, textTransform: "none", '&:hover': { backgroundColor: "#DCDCDC", color: "black" }, }}
+            }
+              variant="contained"
+              color="primary"
+              sx={{
+                mt: 2,
+                backgroundColor: "linear-gradient(45deg, #4caf50 30%, #81c784 90%)",
+                color: "white",
+                borderRadius: "8px",
+                paddingLeft: "2rem",
+                paddingRight: "2rem",
+                fontSize: "16px",
+                textTransform: "none",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                '&:hover': {
+                  backgroundColor: "linear-gradient(45deg, #66bb6a 30%, #388e3c 90%)",
+                  boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                },
+              }}
             >Try now</Button>
 
 

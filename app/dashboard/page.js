@@ -135,7 +135,7 @@ export default function Home() {
           </Grid2>
         </Grid2>
 
-        <AddCarModal />
+        <AddCarModal onCarAdded={fetchCars}/>
       </Box>
     </Layout>
   )

@@ -1,7 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import { Box, Typography } from "@mui/material";
 
-export default function SignUpPage() {
+export default function SignIpPage() {
   return (
     <Box
       display="flex"
@@ -10,42 +10,76 @@ export default function SignUpPage() {
       alignItems="center"
       minHeight="100vh"
       sx={{
-        backgroundColor: "#f0f4f8",
+        backgroundColor: "#47ADF6",
         padding: "2rem",
       }}
     >
       {/* Logo or Brand Name */}
-      <Typography
-        variant="h2"
+
+      <Box
         sx={{
-          mb: 4,
-          fontWeight: "bold",
-          color: "#333",
-          fontFamily: "'Roboto', sans-serif",
+          backgroundColor: "#ffffff",
+          padding: "1rem",
+          borderRadius: 2,
+          boxShadow: 3,
+          width: "100%",
+          border: `1px solid #0099ff`,
+          display: 'flex',
+          justifyContent: 'center', // Center content vertically
+          alignItems: 'center', // Center content horizontally
+          height: "15vh", // Adjust height as needed
+          mb: 2,
         }}
       >
-        Welcome to MechaniCare
-      </Typography>
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: "bold",
+            color: "#1C1B1B",
+            fontFamily: "'Poppins', sans-serif",
+            textAlign: 'center', // Ensure text is centered
+            lineHeight: "1.2", // Tweak line height for better centering
+          }}
+        >
+          Welcome to MechaniCare
+        </Typography>
+      </Box>
 
-      {/* Clerk Sign-Up Component */}
-      
+      {/* Sign-Up Component */}
+      <Box
+        sx={{
+          backgroundColor: "#ffffff",
+          padding: "2rem",
+          borderRadius: 2,
+          boxShadow: 3,
+          maxWidth: "50%",
+          width: "100%",
+          border: `1px solid #0099ff`,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <SignUp
           path="/sign-up"
           routing="path"
-          signUpUrl="/sign-up"
+          signInUrl="/sign-in"
+          fallbackRedirectUrl="/dashboard"
+          style={{ width: '100%' }}
         />
-      
+      </Box>
 
       {/* Footer Text */}
       <Typography
         variant="body2"
         sx={{
-          mt: 2,
-          color: "#888",
+          mt: 3,
+          color: "#ffffff",
+          fontFamily: "'Roboto', sans-serif",
         }}
       >
-        Already have an account?{" "}
-        <a href="/sign-in" style={{ color: "#007bff" }}>
+        Already got an account?{" "}
+        <a href="/sign-in" style={{ color: "#1FFF01", textDecoration: "none", fontWeight: 'bold' }}>
           Sign in here
         </a>
       </Typography>

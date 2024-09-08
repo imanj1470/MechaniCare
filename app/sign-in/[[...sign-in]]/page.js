@@ -1,15 +1,16 @@
-import { SignIn } from '@clerk/nextjs'
+import { SignIn } from "@clerk/nextjs";
 import { Box, Typography } from "@mui/material";
-export default function Page() {
-  return (<>
-   <Box
+
+export default function SignIpPage() {
+  return (
+    <Box
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
       sx={{
-        backgroundColor: "#f0f4f8",
+        backgroundColor: "#47ADF6",
         padding: "2rem",
       }}
     >
@@ -19,37 +20,50 @@ export default function Page() {
         sx={{
           mb: 4,
           fontWeight: "bold",
-          color: "#333",
-          fontFamily: "'Roboto', sans-serif",
+          color: "#F0F5F9",
+          fontFamily: "'Poppins', sans-serif",
         }}
       >
         Welcome to MechaniCare
       </Typography>
 
-      {/* Clerk Sign-Up Component */}
-      
+      {/* Sign-in Component */}
+      <Box
+        sx={{
+          backgroundColor: "#ffffff",
+          padding: "2rem",
+          borderRadius: 2,
+          boxShadow: 3,
+          maxWidth: "50%",
+          width: "100%",
+          border: `1px solid #0099ff`,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <SignIn
           path="/sign-in"
           routing="path"
-          signUpUrl="/sign-in"
+          signUpUrl="/dashboard"
+          style={{ width: '100%' }}
         />
-      
+      </Box>
 
-      {/* Footer Text */}
-      <Typography
+       {/* Footer Text */}
+       <Typography
         variant="body2"
         sx={{
-          mt: 2,
-          color: "#888",
+          mt: 3,
+          color: "#ffffff",
+          fontFamily: "'Roboto', sans-serif",
         }}
       >
-        Already have an account?{" "}
-        <a href="/sign-in" style={{ color: "#007bff" }}>
-          Sign in here
+        Dont have an account?{" "}
+        <a href="/sign-up" style={{ color: "#1FFF01", textDecoration: "none", fontWeight: 'bold' }}>
+          Sign up here
         </a>
       </Typography>
     </Box>
-
-  </>
-  )
+  );
 }
