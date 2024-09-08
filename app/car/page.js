@@ -21,6 +21,8 @@ export default function Car() {
     const [error, setError] = useState(null);
     const [showAttributes, setShowAttributes] = useState(false);
     const [showRecalls, setShowRecalls] = useState(false);
+    const recallsRef = useRef(null);
+    const attributesRef = useRef(null);
 
     const attributesRef = useRef(null);
     const recallsRef = useRef(null);
