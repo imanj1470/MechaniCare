@@ -41,8 +41,8 @@ const Layout = ({ children }) => {
             <Box
                 flex={1}
                 display="flex"
-                justifyContent="center"
-                alignItems="center"
+                //justifyContent="center"
+                //alignItems="center"
                 sx={{ padding: "2rem" }}
             >
                 {children}
