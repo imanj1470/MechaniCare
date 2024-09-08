@@ -1,6 +1,6 @@
 "use client"
 //import { Layout } from "./components/header.js"
-import { Box, Grid2, Paper, Typography } from "@mui/material";
+import { Box, Grid2, Paper, Typography, Button } from "@mui/material";
 import { useRouter } from 'next/navigation';
 import { AddCarModal } from "../components/add_car_modal.js"
 import { Layout, Loading } from "../components/Layout.js";
@@ -109,7 +109,9 @@ export default function Home() {
                 <p>Make: {car.make}</p>
                 <p>Model: {car.model}</p>
                 <p>Year: {car.year}</p>
+                <Button>Details</Button>
               </Paper>
+              
             </Grid2>
           ))}
 

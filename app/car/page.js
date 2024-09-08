@@ -6,12 +6,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Layout, Loading } from "../components/Layout.js"; // Ensure the path is correct
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase"; // Ensure this path is correct
+import { db } from "../firebase.js" // Ensure this path is correct
+
+import { useSearchParams } from "next/navigation"
 
 export default function Car() {
-    const { isLoaded, isSignedIn } = useUser();
+    const { isLoaded, isSignedIn, user } = useUser();
     const [carDetails, updateCarDetails] = useState([]);
     const router = useRouter(); // Initialize useRouter
+    const searchParams = useSearchParams()
+    const search = searchParams.get("id")
+    
+
 
     useEffect(() => {
         if (isLoaded && !isSignedIn) {
@@ -20,56 +26,42 @@ export default function Car() {
     }, [isLoaded, isSignedIn, router]);
 
     useEffect(() => {
-        const fetchCarDetails = async () => {
-            // Check if the router.query is available
-            const search = router.query?.id;
-
+        async function getCarDetails() {    
             if (!search) {
                 console.error('VIN is required.');
                 return;
             }
-
+    
             try {
                 // Reference to the specific VIN document in the `vin_records` collection
                 const vinDocRef = doc(db, 'vin_records', search);
-
-                // Reference to the attributes and recalls subcollections
-                const attributesDocRef = doc(vinDocRef, 'attributes');
-                const recallsDocRef = doc(vinDocRef, 'recalls');
-
-                // Fetch the attributes and recalls documents
-                const [attributesDoc, recallsDoc] = await Promise.all([
-                    getDoc(attributesDocRef),
-                    getDoc(recallsDocRef)
-                ]);
-
-                // Check if documents exist and prepare the car details
-                if (attributesDoc.exists() && recallsDoc.exists()) {
+            
+                // Fetch the VIN document
+                const vinDoc = await getDoc(vinDocRef);
+            console.log(vinDoc)
+                // Check if the document exists and prepare the car details
+                if (vinDoc.exists()) {
+                    const vinData = vinDoc.data();
                     const carDetails = {
                         vin: search,
-                        attributes: attributesDoc.data(),
-                        recalls: recallsDoc.data(),
+                        attributes: vinData.attributes, // Access attributes from the document data
+                        recalls: vinData.recalls,       // Access recalls from the document data
                     };
-
+            
                     // Store the details in state or handle them as needed
                     updateCarDetails([carDetails]);
-                    console.log(carDetails);
+                    console.log('Fetched car details:', carDetails);
                 } else {
-                    console.error('Attributes or recalls document not found.');
+                    console.error('VIN document not found.');
                 }
-
+            
             } catch (error) {
                 console.error('Error fetching car details:', error.message);
             }
         };
-
-        // Only fetch car details if router.query is defined
-        if (router.query?.id) {
-        
-            fetchCarDetails();
-            console.log(carDetails)
-        }
-    }, [router.query]);
+    
+        getCarDetails();
+    }, [search]);
 
     if (!isLoaded || !isSignedIn) {
         return <Loading />;
@@ -81,38 +73,49 @@ export default function Car() {
             <Typography variant="h4" gutterBottom>
                 Car Details
             </Typography>
-            <Grid2 container spacing={2}>
-                {carDetails.map((car, index) => (
-                    <Grid2 item xs={12} sm={6} md={4} key={index}>
-                        <Paper
-                            elevation={3}
-                            sx={{
-                                padding: "2rem",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                backgroundColor: "white",
-                            }}
-                        >
-                            <Typography variant="h6" gutterBottom>
-                                VIN: {car.vin}
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Make:</strong> {car.attributes.Make}
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Model:</strong> {car.attributes.Model}
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Year:</strong> {car.attributes.Year || "Unknown"}
-                            </Typography>
-                            <Typography variant="body1" sx={{ marginTop: 2 }}>
-                                <strong>Recalls:</strong> {car.recalls.Component || "None"}
-                            </Typography>
-                        </Paper>
-                    </Grid2>
-                ))}
-            </Grid2>
+            {carDetails.length > 0 ? (
+                <Grid2 container spacing={2}>
+                    {carDetails.map((car, index) => (
+                        <Grid2 item="true" xs={12} key={index}>
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    padding: "2rem",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    backgroundColor: "white",
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom>
+                                    VIN: {car.vin}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                                    <strong>Make:</strong> {car.attributes.Make}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                                    <strong>Model:</strong> {car.attributes.Model}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                                    <strong>Year:</strong> {car.attributes.Year || "Unknown"}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                                    <strong>Color:</strong> {car.attributes.Color || "Not specified"}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                                    <strong>Engine:</strong> {car.attributes.Engine || "Not specified"}
+                                </Typography>
+                                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                                    <strong>Recalls:</strong> {car.recalls.Component}
+                                </Typography>
+                                {/* Add more fields if needed */}
+                            </Paper>
+                        </Grid2>
+                    ))}
+                </Grid2>
+            ) : (
+                <Typography variant="body1">No car details available.</Typography>
+            )}
         </Box>
         </Layout>
     );
