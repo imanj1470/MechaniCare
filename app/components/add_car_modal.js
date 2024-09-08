@@ -23,7 +23,7 @@ const AddCarModal = () => {
           const data = await response.json();
       
           if (response.ok) {
-            console.log('Data stored successfully:', data);
+            console.log('Data stored successfully:');
             // Handle success (e.g., show a notification or update UI)
           } else {
             console.error('Error storing data:', data.message);
@@ -54,7 +54,7 @@ const AddCarModal = () => {
             }
         
             const result = await response.json();
-            console.log(result)
+            //console.log(result)
             sendVinData(vin, result)
 
             //now send data to db

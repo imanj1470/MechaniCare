@@ -1,7 +1,6 @@
-
-import { doc, setDoc ,collection} from "firebase/firestore";
-import { auth, currentUser } from '@clerk/nextjs/server'
-import {db} from "../../firebase"
+import { doc, setDoc, collection } from "firebase/firestore";
+import { auth } from '@clerk/nextjs/server';
+import { db } from "../../firebase";
 import { NextResponse } from 'next/server';
 
 const formatAttributes = (attributesList) => {
@@ -27,9 +26,9 @@ export async function POST(req) {
 
     const { attributes_list, recall_list } = apiResponse.message;
 
-    const { userId } = auth()
-    console.log(userId)
-    
+    // Get the user ID from the auth session
+    const { userId } = auth();
+    console.log(userId);
 
     if (!userId) {
       return NextResponse.json({ success: false, message: 'User id not found' }, { status: 400 });
@@ -39,21 +38,15 @@ export async function POST(req) {
     const attributes = formatAttributes(attributes_list);
     const recalls = formatAttributes(recall_list);
 
-    // Create document in Firestore
+    // Reference to the vin_records collection
+    const vinDocRef = doc(collection(db, 'vin_records'), vin);
 
-
-    /* const docRef = doc(collection(db, "users"), userId);
-    await setDoc(docRef, {
-      vin,
+    // Set data in the document
+    await setDoc(vinDocRef, {
+      userId, // Associate the VIN record with the user
       attributes,
       recalls,
-    }); */
-
-    const userDocRef = doc(collection(db, 'users'), userId);
-    const vinCollectionRef = collection(userDocRef, vin);
-
-    await setDoc(doc(vinCollectionRef, 'attributes'), attributes);
-    await setDoc(doc(vinCollectionRef, 'recalls'), recalls);
+    });
 
     return NextResponse.json({ success: true, message: 'Data stored successfully' });
   } catch (error) {

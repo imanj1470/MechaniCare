@@ -53,7 +53,7 @@ const Layout = ({ children }) => {
 
 const Loading = () => {
 return(
-    <Box display="flex" justifyContent="center" alignItems="center">
+    <Box maxWidth maxHeight display="flex" justifyContent="center" alignItems="center">
 <Typography variant="h2">Loading...</Typography>
     </Box>
 )
