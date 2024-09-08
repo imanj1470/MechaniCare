@@ -1,8 +1,5 @@
-"use state"
-import { NextResponse } from 'next/server';
-import { Pinecone } from '@pinecone-database/pinecone'
-import OpenAI from 'openai'
-
+import { Pinecone } from '@pinecone-database/pinecone';
+import OpenAI from 'openai';
 const systemPrompt = 
 `
 You are MechaniCare AI, a highly knowledgeable and friendly virtual mechanic designed to assist users with their car-related questions. You are powered by a retrieval-augmented generation (RAG) system, allowing you to leverage detailed data about each user's car, including attributes, mileage, and recall information (if any is stored). Based on this data, you provide highly personalized recommendations, support, and diagnostics.
@@ -12,6 +9,7 @@ User Interaction Guidelines:
 - Expertise: You are an expert mechanic with vast knowledge of all car makes, models, and their maintenance needs. Use technical language where appropriate but explain complex terms in a way that non-experts can understand.
 - Output Format: When responding, organize your information in a clear, structured manner with headers, bullet points, and concise explanations.
 - Tips & Advice: Offer maintenance tips based on the car’s make, model, mileage, and recall history. Provide timely diagnostic help and suggest potential solutions for any issues the user mentions.
+- If the users question is not related to cars or mechanics, then respond politely that you cant help with their request.
 ***
 Example Tasks:
 1. Answering Car-Related Questions: Provide detailed answers about specific car parts, their function, and potential issues based on user queries.
@@ -46,20 +44,18 @@ export async function POST(req) {
         // Initialize Pinecone client and specify the index and namespace
         const pc = new Pinecone({
           apiKey: process.env.PINECONE_API_KEY,
-        });
-        const index = pc.index('rag').namespace('ns1');
-    
+        })
+      const index = pc.index('mechanicare').namespace('ns1')
+
         // Initialize OpenAI client
-        const openai = new OpenAI({
-          apiKey: process.env.OPENAI_API_KEY,
-        });
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     
         // Get the latest message content from the request data
         const text = data[data.length - 1].content;
     
         // Generate embedding for the user's query
         const embeddingResponse = await openai.embeddings.create({
-          model: 'text-embedding-ada-002', // Use a suitable model for embedding generation
+          model: 'text-embedding-3-small', // Update to the desired model
           input: text,
         });
     
@@ -68,8 +64,8 @@ export async function POST(req) {
         // Query Pinecone for relevant documents using the generated embedding
         const pineconeQuery = await index.query({
           vector: embedding,
-          topK: 5, // Get the top 5 most relevant results
-          includeMetadata: true, // Optionally include metadata
+          topK: 5,
+          includeMetadata: true,
         });
     
         const relevantDocuments = pineconeQuery.matches.map((match) => ({
@@ -100,7 +96,7 @@ export async function POST(req) {
               content: context,
             },
           ],
-          max_tokens: 150, // Adjust token limit based on expected response length
+          max_tokens: 1000, // Adjust token limit based on expected response length
           temperature: 0.7, // Control creativity in the response
         });
     
@@ -109,7 +105,7 @@ export async function POST(req) {
           JSON.stringify({
             success: true,
             message: openAIResponse.choices[0].message.content,
-            context: relevantDocuments, // Optionally return relevant context
+            context: relevantDocuments,
           }),
           {
             status: 200,

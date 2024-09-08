@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
                         <Link href="/dashboard" sx={{ color: "white", textDecoration: "none", '&:hover': { textDecoration: 'underline' } }}>Dashboard</Link>
                     </Typography>
                     <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                        AI Chatbot
+                    <Link href="/chat" sx={{ color: "white", textDecoration: "none", '&:hover': { textDecoration: 'underline' } }}>AI chatbot</Link>
                     </Typography>
 
                     {/* User Button for Sign Out */}
