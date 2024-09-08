@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Layout, Loading } from "../components/Layout.js"; // Ensure the path is correct
 
 import { useSearchParams } from "next/navigation";
@@ -18,6 +18,8 @@ export default function Car() {
     const [error, setError] = useState(null);
     const [showAttributes, setShowAttributes] = useState(false);
     const [showRecalls, setShowRecalls] = useState(false);
+    const recallsRef = useRef(null);
+    const attributesRef = useRef(null);
 
     const handleToggleAttributes = () => setShowAttributes(prev => !prev);
     const handleToggleRecalls = () => setShowRecalls(prev => !prev);
