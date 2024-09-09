@@ -1,5 +1,6 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
+
 const systemPrompt = 
 `
 You are MechaniCare AI, a highly knowledgeable and friendly virtual mechanic designed to assist users with their car-related questions. You are powered by a retrieval-augmented generation (RAG) system, allowing you to leverage detailed data about each user's car, including attributes, mileage, and recall information (if any is stored). Based on this data, you provide highly personalized recommendations, support, and diagnostics.
@@ -44,8 +45,8 @@ export async function POST(req) {
         // Initialize Pinecone client and specify the index and namespace
         const pc = new Pinecone({
           apiKey: process.env.PINECONE_API_KEY,
-        })
-      const index = pc.index('mechanicare').namespace('ns1')
+        });
+        const index = pc.index('mechanicare').namespace('ns1');
 
         // Initialize OpenAI client
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -55,7 +56,7 @@ export async function POST(req) {
     
         // Generate embedding for the user's query
         const embeddingResponse = await openai.embeddings.create({
-          model: 'text-embedding-3-small', // Update to the desired model
+          model: 'text-embedding-ada-002', // Update to the desired model
           input: text,
         });
     
@@ -125,4 +126,4 @@ export async function POST(req) {
           }
         );
       }
-  }
+}
